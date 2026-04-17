@@ -1,22 +1,17 @@
 package itp341.caceres.nicholas.tipCalculator;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.EditText;
-
+import androidx.appcompat.app.AppCompatActivity;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-
-import itp341.caceres.nicholas.tipCalculator.R;
 
 public class MainActivity extends AppCompatActivity {
 
