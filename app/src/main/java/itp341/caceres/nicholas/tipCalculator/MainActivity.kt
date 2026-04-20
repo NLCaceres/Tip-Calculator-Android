@@ -1,108 +1,132 @@
-package itp341.caceres.nicholas.tipCalculator;
+package itp341.caceres.nicholas.tipCalculator
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.EditText;
-import androidx.appcompat.app.AppCompatActivity;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.EditText
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Spinner
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
-public class MainActivity extends AppCompatActivity {
+class MainActivity : AppCompatActivity() {
+  private lateinit var textViewPerPersonTipValue: TextView
+  private lateinit var textViewPerPersonTip: TextView
+  private lateinit var textViewPerPersonTotalValue: TextView
+  private lateinit var textViewPerPersonTotal: TextView
+  private lateinit var textViewPerPerson: TextView
+  private lateinit var textViewTotalValue: TextView
+  private lateinit var textViewTipValue: TextView
+  private lateinit var textViewPercentValue: TextView
 
-    private TextView textViewPerPersonTipValue;
-    private TextView textViewPerPersonTip;
-    private TextView textViewPerPersonTotalValue;
-    private TextView textViewPerPersonTotal;
-    private TextView textViewPerPerson;
-    private TextView textViewTotalValue;
-    private TextView textViewTipValue;
-    private TextView textViewPercentValue;
+  private lateinit var spinnerSplit: Spinner
 
-    private Spinner spinnerSplit;
+  private lateinit var seekBarPercent: SeekBar
 
-    private SeekBar seekBarPercent;
+  private lateinit var editTextBillAmount: EditText
 
-    private EditText editTextBillAmount;
+  private var billAmount = 0.0
+  private var percent = 0.0
+  private var tip = 0.0
+  private var tipPerPerson = 0.0
+  private var total = 0.0
+  private var totalPerPerson = 0.0
 
-    private double billAmount;
-    private double percent;
-    private double tip;
-    private double tipPerPerson;
-    private double total;
-    private double totalPerPerson;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    textViewPercentValue = findViewById(R.id.text_percent_value)
+    textViewTipValue = findViewById(R.id.text_tip_value)
+    textViewTotalValue = findViewById(R.id.text_total_value)
+    textViewPerPersonTipValue = findViewById(R.id.text_per_person_tip_value)
+    textViewPerPersonTip = findViewById(R.id.text_per_person_tip)
+    textViewPerPersonTotalValue = findViewById(R.id.text_per_person_total_value)
+    textViewPerPersonTotal = findViewById(R.id.text_per_person_total)
+    textViewPerPerson = findViewById(R.id.text_per_person)
 
-        textViewPercentValue = (TextView) findViewById(R.id.text_percent_value);
-        textViewTipValue = (TextView) findViewById(R.id.text_tip_value);
-        textViewTotalValue = (TextView) findViewById(R.id.text_total_value);
-        textViewPerPersonTipValue = (TextView) findViewById(R.id.text_per_person_tip_value);
-        textViewPerPersonTip = (TextView) findViewById(R.id.text_per_person_tip);
-        textViewPerPersonTotalValue = (TextView) findViewById(R.id.text_per_person_total_value);
-        textViewPerPersonTotal = (TextView) findViewById(R.id.text_per_person_total);
-        textViewPerPerson = (TextView) findViewById(R.id.text_per_person);
+    spinnerSplit = findViewById(R.id.spinnerSplit)
 
-        spinnerSplit = (Spinner) findViewById(R.id.spinnerSplit);
+    seekBarPercent = findViewById(R.id.seek_bar)
+    percent = 15.00
 
-        seekBarPercent = (SeekBar) findViewById(R.id.seek_bar);
-        percent = 15.00;
+    editTextBillAmount = findViewById(R.id.edit_bill_amount)
 
-        editTextBillAmount = (EditText) findViewById(R.id.edit_bill_amount);
+    //billAmountEditorListener billAmountListener = new billAmountEditorListener();
+    //editTextBillAmount.setOnEditorActionListener(billAmountListener);
+    editTextBillAmount.addTextChangedListener(BillAmountTextWatcher())
+    val percentSeekListener = percentSeekBarListener()
+    seekBarPercent.setOnSeekBarChangeListener(percentSeekListener)
+    val splitListener = spinnerSplitListener()
+    spinnerSplit.setOnItemSelectedListener(splitListener)
+  }
 
-        //billAmountEditorListener billAmountListener = new billAmountEditorListener();
-        //editTextBillAmount.setOnEditorActionListener(billAmountListener);
-        editTextBillAmount.addTextChangedListener(new BillAmountTextWatcher());
-        percentSeekBarListener percentSeekListener = new percentSeekBarListener();
-        seekBarPercent.setOnSeekBarChangeListener(percentSeekListener);
-        spinnerSplitListener splitListener = new spinnerSplitListener();
-        spinnerSplit.setOnItemSelectedListener(splitListener);
+  private fun updateTipTotalPerPerson() {
+    val percentDbl = percent / 100
+
+    val decFormat = DecimalFormat("0.00")
+    decFormat.setRoundingMode(RoundingMode.HALF_EVEN)
+
+    tip = billAmount * percentDbl
+    textViewTipValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(tip))
+    total = billAmount + tip
+    textViewTotalValue.setText(
+      getResources().getString(R.string.dollar_sign) + decFormat.format(
+        total
+      )
+    )
+
+    if (spinnerSplit.getSelectedItemPosition() == 1) {
+      tipPerPerson = tip / 2
+      textViewPerPersonTipValue.setText(
+        getResources().getString(R.string.dollar_sign) + decFormat.format(
+          tipPerPerson
+        )
+      )
+      totalPerPerson = total / 2
+      textViewPerPersonTotalValue.setText(
+        getResources().getString(R.string.dollar_sign) + decFormat.format(
+          totalPerPerson
+        )
+      )
+    } else if (spinnerSplit.getSelectedItemPosition() == 2) {
+      tipPerPerson = tip / 3
+      textViewPerPersonTipValue.setText(
+        getResources().getString(R.string.dollar_sign) + decFormat.format(
+          tipPerPerson
+        )
+      )
+      totalPerPerson = total / 3
+      textViewPerPersonTotalValue.setText(
+        getResources().getString(R.string.dollar_sign) + decFormat.format(
+          totalPerPerson
+        )
+      )
+    } else if (spinnerSplit.getSelectedItemPosition() == 3) {
+      tipPerPerson = tip / 4
+      textViewPerPersonTipValue.setText(
+        getResources().getString(R.string.dollar_sign) + decFormat.format(
+          tipPerPerson
+        )
+      )
+      totalPerPerson = total / 4
+      textViewPerPersonTotalValue.setText(
+        getResources().getString(R.string.dollar_sign) + decFormat.format(
+          totalPerPerson
+        )
+      )
+    } else {
+      return
     }
+  }
 
-    private void updateTipTotalPerPerson() {
-
-        double percentDbl = percent / 100;
-
-        DecimalFormat decFormat = new DecimalFormat("0.00");
-        decFormat.setRoundingMode(RoundingMode.HALF_EVEN);
-
-        tip = billAmount * percentDbl;
-        textViewTipValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(tip));
-        total = billAmount + tip;
-        textViewTotalValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(total));
-
-        if (spinnerSplit.getSelectedItemPosition() == 1) {
-            tipPerPerson = tip / 2;
-            textViewPerPersonTipValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(tipPerPerson));
-            totalPerPerson = total / 2;
-            textViewPerPersonTotalValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(totalPerPerson));
-        }
-        else if (spinnerSplit.getSelectedItemPosition() == 2){
-            tipPerPerson = tip / 3;
-            textViewPerPersonTipValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(tipPerPerson));
-            totalPerPerson = total / 3;
-            textViewPerPersonTotalValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(totalPerPerson));
-        }
-        else if (spinnerSplit.getSelectedItemPosition() == 3) {
-            tipPerPerson = tip / 4;
-            textViewPerPersonTipValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(tipPerPerson));
-            totalPerPerson = total / 4;
-            textViewPerPersonTotalValue.setText(getResources().getString(R.string.dollar_sign) + decFormat.format(totalPerPerson));
-        }
-        else {
-            return;
-        }
-    }
-
-    /*private class billAmountEditorListener implements EditText.OnEditorActionListener {
+  /*private class billAmountEditorListener implements EditText.OnEditorActionListener {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -115,66 +139,57 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }*/
-    private class BillAmountTextWatcher implements TextWatcher {
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            String billAmountString = editTextBillAmount.getText().toString();
-            if (billAmountString.length() > 0) {
-                billAmount = Double.parseDouble(billAmountString);
-            } else {
-                billAmount = 0.00;
-            }
-            updateTipTotalPerPerson();
-        }
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-        @Override
-        public void afterTextChanged(Editable editable) { }
+  private inner class BillAmountTextWatcher : TextWatcher {
+    override fun onTextChanged(charSequence: CharSequence?, i: Int, i1: Int, i2: Int) {
+      val billAmountString = editTextBillAmount.getText().toString()
+      if (billAmountString.length > 0) {
+        billAmount = billAmountString.toDouble()
+      } else {
+        billAmount = 0.00
+      }
+      updateTipTotalPerPerson()
     }
 
-    private class percentSeekBarListener implements SeekBar.OnSeekBarChangeListener {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            textViewPercentValue.setText(progress + getResources().getString(R.string.percent_sign));
-            percent = progress;
-            updateTipTotalPerPerson();
-        }
+    override fun beforeTextChanged(charSequence: CharSequence?, i: Int, i1: Int, i2: Int) {}
+    override fun afterTextChanged(editable: Editable?) {}
+  }
 
-
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-
-        public void onStopTrackingTouch (SeekBar seekBar) {
-
-        }
+  private inner class percentSeekBarListener : OnSeekBarChangeListener {
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+      textViewPercentValue.setText(progress.toString() + getResources().getString(R.string.percent_sign))
+      percent = progress.toDouble()
+      updateTipTotalPerPerson()
     }
 
-    private class spinnerSplitListener implements AdapterView.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (position == 0){
-                textViewPerPersonTipValue.setVisibility(View.GONE);
-                textViewPerPersonTip.setVisibility(View.GONE);
-                textViewPerPersonTotalValue.setVisibility(View.GONE);
-                textViewPerPersonTotal.setVisibility(View.GONE);
-                textViewPerPerson.setVisibility(View.GONE);
-                updateTipTotalPerPerson();
-            }
-            else {
-                textViewPerPersonTipValue.setVisibility(View.VISIBLE);
-                textViewPerPersonTip.setVisibility(View.VISIBLE);
-                textViewPerPersonTotalValue.setVisibility(View.VISIBLE);
-                textViewPerPersonTotal.setVisibility(View.VISIBLE);
-                textViewPerPerson.setVisibility(View.VISIBLE);
-                updateTipTotalPerPerson();
-            }
-        }
 
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
     }
+
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+    }
+  }
+
+  private inner class spinnerSplitListener : OnItemSelectedListener {
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+      if (position == 0) {
+        textViewPerPersonTipValue.setVisibility(View.GONE)
+        textViewPerPersonTip.setVisibility(View.GONE)
+        textViewPerPersonTotalValue.setVisibility(View.GONE)
+        textViewPerPersonTotal.setVisibility(View.GONE)
+        textViewPerPerson.setVisibility(View.GONE)
+        updateTipTotalPerPerson()
+      } else {
+        textViewPerPersonTipValue.setVisibility(View.VISIBLE)
+        textViewPerPersonTip.setVisibility(View.VISIBLE)
+        textViewPerPersonTotalValue.setVisibility(View.VISIBLE)
+        textViewPerPersonTotal.setVisibility(View.VISIBLE)
+        textViewPerPerson.setVisibility(View.VISIBLE)
+        updateTipTotalPerPerson()
+      }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+  }
 }
