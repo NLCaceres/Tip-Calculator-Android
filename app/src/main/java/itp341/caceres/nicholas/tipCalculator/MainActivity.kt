@@ -12,6 +12,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.Text
+import androidx.compose.ui.platform.ComposeView
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
   private lateinit var seekBarPercent: SeekBar
 
   private lateinit var editTextBillAmount: EditText
+
+  private lateinit var mainComposeView: ComposeView
 
   private var billAmount = 0.0
   private var percent = 0.0
@@ -65,6 +69,11 @@ class MainActivity : AppCompatActivity() {
     seekBarPercent.setOnSeekBarChangeListener(percentSeekListener)
     val splitListener = spinnerSplitListener()
     spinnerSplit.setOnItemSelectedListener(splitListener)
+
+    mainComposeView = findViewById(R.id.main_compose_view)
+    mainComposeView.setContent {
+      Text("Hello World")
+    }
   }
 
   private fun updateTipTotalPerPerson() {
