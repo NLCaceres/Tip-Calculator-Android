@@ -19,10 +19,10 @@ data class Bill(val amount: String, val percent: Float, var split: Int) {
         toString() ?: ZERO_BILL
   val perPersonTip: String
     get() = tip.toBigDecimalOrNull()?.
-      divide(BigDecimal(split), 2, RoundingMode.HALF_EVEN)?.
+      divide(BigDecimal(if (split > 0) split else 1), 2, RoundingMode.HALF_EVEN)?.
         toString() ?: ZERO_BILL
   val perPersonTotal: String
     get() = total.toBigDecimalOrNull()?.
-      divide(BigDecimal(split), 2, RoundingMode.HALF_EVEN)?.
+      divide(BigDecimal(if (split > 0) split else 1), 2, RoundingMode.HALF_EVEN)?.
         toString() ?: ZERO_BILL
 }
