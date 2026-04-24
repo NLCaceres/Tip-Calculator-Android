@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,15 +26,13 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LabeledDropdown(label: String, updateSplit: (String) -> Unit) {
+fun LabeledDropdown(label: String, options: List<String>, selectedIndex: Int, updateSelection: (Int) -> Unit) {
   var expanded by remember { mutableStateOf(false) }
-  val options = listOf("No", "2 ways", "3 ways", "4 ways")
-  var selectedOption by remember { mutableStateOf(options[0]) }
 
   Row(Modifier.padding(vertical = 10.dp, horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, Modifier.weight(7f)) {
-      TextField(value = selectedOption, onValueChange = {}, readOnly = true,
+      TextField(value = options[selectedIndex], onValueChange = {}, readOnly = true,
         modifier = Modifier.menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true),
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         colors = ExposedDropdownMenuDefaults.textFieldColors(
@@ -41,12 +40,8 @@ fun LabeledDropdown(label: String, updateSplit: (String) -> Unit) {
         ),
       )
       ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-        options.forEach { option ->
-          DropdownMenuItem(text = { Text(option) }, onClick = {
-            selectedOption = option
-            expanded = false
-            updateSplit(option)
-          })
+        options.forEachIndexed { i, option ->
+          DropdownMenuItem(text = { Text(option) }, onClick = { expanded = false; updateSelection(i) })
         }
       }
     }
@@ -56,7 +51,10 @@ fun LabeledDropdown(label: String, updateSplit: (String) -> Unit) {
 @Preview(widthDp = 360, heightDp = 500, showBackground = true)
 @Composable
 private fun DropdownPreview() {
+  val options = listOf("Option 1", "Option 2", "Option 3")
+  var selectedIndex by remember { mutableIntStateOf(0) }
+
   Column {
-    LabeledDropdown("List") { }
+    LabeledDropdown("List", options, selectedIndex) { selectedIndex = it }
   }
 }
