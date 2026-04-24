@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class ViewModelMain : ViewModel() {
-  private val _bill = MutableStateFlow(Bill("0.00", 0.15f, 1))
+  private val _bill = MutableStateFlow(Bill("", 0.15f, 1))
   val bill: StateFlow<Bill> = _bill
 
   fun updateAmount(amount: String) {

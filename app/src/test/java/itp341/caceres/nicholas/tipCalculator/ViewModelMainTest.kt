@@ -16,14 +16,14 @@ class ViewModelMainTest {
     @Test
     fun testInitialState() {
         val bill = viewModel.bill.value
-        assertEquals("0.00", bill.amount)
+        assertEquals("", bill.amount)
         assertEquals(0.15f, bill.percent)
         assertEquals(1, bill.split)
     }
 
     @Test
     fun testUpdateAmount() {
-        assertEquals("0.00", viewModel.bill.value.amount)
+        assertEquals("", viewModel.bill.value.amount)
         viewModel.updateAmount("50.00")
         assertEquals("50.00", viewModel.bill.value.amount)
     }
