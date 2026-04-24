@@ -19,4 +19,8 @@ class ViewModelMain : ViewModel() {
   fun updateSplit(index: Int) {
     _bill.value = _bill.value.copy(split = index + 1)
   }
+
+  companion object {
+    val options = listOf("No", "2 ways", "3 ways", "4 ways")
+  }
 }
