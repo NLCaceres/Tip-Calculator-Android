@@ -25,7 +25,7 @@ fun MainScreen(viewModel: ViewModelMain) {
     LabeledText("Tip", bill.tip, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
     LabeledText("Total",bill.total, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
     HorizontalDivider(modifier = Modifier.padding(10.dp, 15.dp), thickness = 2.dp, color = Color.DarkGray)
-    LabeledDropdown("Split Bill?", viewModel::updateSplit)
+    LabeledDropdown("Split Bill?", listOf("No", "2 ways", "3 ways", "4 ways"), bill.split - 1) { viewModel.updateSplit(it + 1) }
   }
 }
 
