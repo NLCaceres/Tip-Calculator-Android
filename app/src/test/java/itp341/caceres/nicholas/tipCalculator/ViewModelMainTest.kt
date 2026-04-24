@@ -37,16 +37,8 @@ class ViewModelMainTest {
 
     @Test
     fun testUpdateSplit() {
-        viewModel.updateSplit("2 ways")
-        assertEquals(2, viewModel.bill.value.split)
-
-        viewModel.updateSplit("3 ways")
-        assertEquals(3, viewModel.bill.value.split)
-
-        viewModel.updateSplit("4 ways")
-        assertEquals(4, viewModel.bill.value.split)
-
-        viewModel.updateSplit("No")
         assertEquals(1, viewModel.bill.value.split)
+        viewModel.updateSplit(4)
+        assertEquals(4, viewModel.bill.value.split)
     }
 }

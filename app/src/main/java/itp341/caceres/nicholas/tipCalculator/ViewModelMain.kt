@@ -14,12 +14,7 @@ class ViewModelMain : ViewModel() {
   fun updatePercent(percent: Float) {
     _bill.value = _bill.value.copy(percent = percent)
   }
-  fun updateSplit(split: String) {
-    when (split) {
-      "No" -> _bill.value = _bill.value.copy(split = 1)
-      "2 ways" -> _bill.value = _bill.value.copy(split = 2)
-      "3 ways" -> _bill.value = _bill.value.copy(split = 3)
-      "4 ways" -> _bill.value = _bill.value.copy(split = 4)
-    }
+  fun updateSplit(split: Int) {
+    _bill.value = _bill.value.copy(split = split)
   }
 }
