@@ -21,6 +21,6 @@ class ViewModelMain : ViewModel() {
   }
 
   companion object {
-    val options = listOf("No", "2 ways", "3 ways", "4 ways")
+    val options = List(10) { if (it == 0) "No" else "${it + 1} ways" }
   }
 }

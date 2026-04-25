@@ -43,4 +43,11 @@ class ViewModelMainTest {
         assertEquals(5, viewModel.bill.value.split)
         assertEquals(4, viewModel.splitIndex)
     }
+
+    @Test
+    fun testOptions() {
+        assertEquals("No", ViewModelMain.options[0])
+        assertEquals("2 ways", ViewModelMain.options[1])
+        assertEquals("10 ways", ViewModelMain.options[9])
+    }
 }
