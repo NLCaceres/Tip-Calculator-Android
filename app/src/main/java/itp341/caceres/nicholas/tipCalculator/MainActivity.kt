@@ -12,8 +12,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.Text
 import androidx.compose.ui.platform.ComposeView
+import itp341.caceres.nicholas.tipCalculator.composables.MainScreen
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
   private var tipPerPerson = 0.0
   private var total = 0.0
   private var totalPerPerson = 0.0
+  private var viewModel = ViewModelMain()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
     mainComposeView = findViewById(R.id.main_compose_view)
     mainComposeView.setContent {
-      Text("Hello World")
+      MainScreen(viewModel)
     }
   }
 
