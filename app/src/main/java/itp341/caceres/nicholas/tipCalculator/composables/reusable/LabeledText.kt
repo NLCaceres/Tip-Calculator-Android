@@ -20,7 +20,7 @@ fun LabeledText(
 ) {
   Row(modifier.fillMaxWidth()) {
     Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = labelWeight, textAlign = labelAlign)
-    Text("$${value}", Modifier.weight(0.7f).padding(start = 16.dp), fontSize = 18.sp)
+    Text(value, Modifier.weight(0.7f).padding(start = 16.dp), fontSize = 18.sp)
   }
 }
 
@@ -28,9 +28,9 @@ fun LabeledText(
 @Composable
 fun LabelTextPreview() {
   Column(Modifier.padding(start = 32.dp)) {
-    LabeledText("Bill Amount", "100.00", modifier = Modifier.padding(top = 20.dp, bottom = 20.dp))
-    LabeledText("Tip Amount", "20.00")
-    LabeledText("Tip", "20.00", modifier = Modifier.padding(top = 20.dp, bottom = 20.dp))
-    LabeledText("Total", "120.00")
+    LabeledText("Bill Amount", "$100.00", modifier = Modifier.padding(top = 20.dp, bottom = 20.dp))
+    LabeledText("Tip Amount", "$20.00")
+    LabeledText("Tip", "$20.00", modifier = Modifier.padding(top = 20.dp, bottom = 20.dp))
+    LabeledText("Total", "$120.00")
   }
 }
