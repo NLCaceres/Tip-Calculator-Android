@@ -8,14 +8,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LabeledText(label: String, value: String, modifier: Modifier = Modifier) {
+fun LabeledText(
+  label: String, value: String, modifier: Modifier = Modifier,
+  labelWeight: FontWeight = FontWeight.Bold, labelAlign: TextAlign = TextAlign.Start
+) {
   Row(modifier.fillMaxWidth()) {
-    Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+    Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = labelWeight, textAlign = labelAlign)
     Text("$${value}", Modifier.weight(0.7f).padding(start = 16.dp), fontSize = 18.sp)
   }
 }

@@ -23,7 +23,7 @@ fun MainScreen(viewModel: ViewModelMain) {
     LabeledTextField("Bill Amount", bill.amount) { viewModel.updateAmount(it) }
     LabeledSlider("Percent", bill.percent) { viewModel.updatePercent(it) }
     LabeledText("Tip", bill.tip, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
-    LabeledText("Total",bill.total, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
+    LabeledText("Total", bill.total, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
     HorizontalDivider(modifier = Modifier.padding(10.dp, 15.dp), thickness = 2.dp, color = Color.DarkGray)
     LabeledDropdown("Split Bill?", ViewModelMain.options, viewModel.splitIndex) { viewModel.updateSplit(it) }
     PerPerson(bill.perPersonTip, bill.perPersonTotal)
