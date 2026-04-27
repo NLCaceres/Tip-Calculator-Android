@@ -6,20 +6,20 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
 }
 android {
-    namespace "itp341.caceres.nicholas.tipCalculator"
-    compileSdkVersion 35
+    namespace = "itp341.caceres.nicholas.tipCalculator"
+    compileSdkVersion = 35
 
     defaultConfig {
-        applicationId "itp341.caceres.nicholas.tipCalculator"
+        applicationId = "itp341.caceres.nicholas.tipCalculator"
         minSdkVersion 26
         targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -27,8 +27,8 @@ android {
         compose = true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
