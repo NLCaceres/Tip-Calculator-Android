@@ -26,6 +26,7 @@ fun MainScreen(viewModel: ViewModelMain) {
     LabeledText("Total",bill.total, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
     HorizontalDivider(modifier = Modifier.padding(10.dp, 15.dp), thickness = 2.dp, color = Color.DarkGray)
     LabeledDropdown("Split Bill?", ViewModelMain.options, viewModel.splitIndex) { viewModel.updateSplit(it) }
+    PerPerson(bill.perPersonTip, bill.perPersonTotal)
   }
 }
 
