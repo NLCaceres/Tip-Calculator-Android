@@ -26,6 +26,22 @@ class ViewModelMainTest {
         assertEquals("", viewModel.bill.value.amount)
         viewModel.updateAmount("50.00")
         assertEquals("50.00", viewModel.bill.value.amount)
+
+        viewModel.updateAmount("abc")
+        assertEquals("abc", viewModel.bill.value.amount)
+        assertEquals("Invalid amount", viewModel.billError.value)
+
+        viewModel.updateAmount("")
+        assertEquals("", viewModel.bill.value.amount)
+        assertEquals("", viewModel.billError.value)
+
+        viewModel.updateAmount("()")
+        assertEquals("()", viewModel.bill.value.amount)
+        assertEquals("Invalid amount", viewModel.billError.value)
+
+        viewModel.updateAmount("123")
+        assertEquals("123", viewModel.bill.value.amount)
+        assertEquals("", viewModel.billError.value)
     }
 
     @Test
