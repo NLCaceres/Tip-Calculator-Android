@@ -19,8 +19,9 @@ import itp341.caceres.nicholas.tipCalculator.composables.reusable.form.LabeledTe
 @Composable
 fun MainScreen(viewModel: ViewModelMain) {
   val bill by viewModel.bill.collectAsState()
+  val billError by viewModel.billError.collectAsState()
   Column {
-    LabeledTextField("Bill Amount", bill.amount) { viewModel.updateAmount(it) }
+    LabeledTextField("Bill Amount", bill.amount, billError) { viewModel.updateAmount(it) }
     LabeledSlider("Percent", bill.percent) { viewModel.updatePercent(it) }
     LabeledText("Tip", bill.tip, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
     LabeledText("Total", bill.total, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))

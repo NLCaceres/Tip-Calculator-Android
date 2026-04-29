@@ -31,7 +31,7 @@ fun LabeledTextField(label: String, text: String, errorMsg: String = "", onTextU
       colors = TextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
         errorContainerColor = Color.Transparent, errorTextColor = Color.Red, errorPrefixColor = Color.Red
-      ),
+      ), singleLine = true,
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
     )
   }
