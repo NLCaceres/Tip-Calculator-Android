@@ -26,7 +26,7 @@ fun LabeledTextField(label: String, text: String, errorMsg: String = "", onTextU
     Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     TextField(text, onValueChange = { onTextUpdate(it) },
       modifier = Modifier.weight(0.7f), placeholder = { Text("0.00") }, prefix = { Text("$") },
-      supportingText = { if (errorMsg.isNotBlank()) Text(errorMsg, color = Color.Red) },
+      supportingText = errorMsg.takeIf { it.isNotBlank() }?.let { { Text(it, color = Color.Red) } },
       isError = errorMsg.isNotBlank(),
       colors = TextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
