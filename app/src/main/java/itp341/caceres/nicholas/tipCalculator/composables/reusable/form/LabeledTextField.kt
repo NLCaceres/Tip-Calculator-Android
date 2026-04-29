@@ -21,22 +21,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LabeledTextField(label: String, text: String, onTextUpdate: (String) -> Unit) {
+fun LabeledTextField(label: String, text: String, errorMsg: String = "", onTextUpdate: (String) -> Unit) {
   Row(Modifier.padding(vertical = 10.dp, horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     TextField(text, onValueChange = { onTextUpdate(it) },
       modifier = Modifier.weight(0.7f), placeholder = { Text("0.00") }, prefix = { Text("$") },
+      supportingText = { if (errorMsg.isNotBlank()) Text(errorMsg, color = Color.Red) },
+      isError = errorMsg.isNotBlank(),
       colors = TextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
+        errorContainerColor = Color.Transparent, errorTextColor = Color.Red, errorPrefixColor = Color.Red
       ),
       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
     )
   }
 }
 
-@Preview(widthDp = 320, heightDp = 500, showBackground = true)
+@Preview(widthDp = 320, heightDp = 150, showBackground = true)
 @Composable
 fun LabeledTextFieldPreview() {
   var text by remember { mutableStateOf("") }
   LabeledTextField("Bill Amount", text) { text = it }
+}
+
+@Preview(widthDp = 320, heightDp = 150, showBackground = true)
+@Composable
+fun ErrorLabeledTextFieldPreview() {
+  var text by remember { mutableStateOf("abc") }
+  var textErr by remember { mutableStateOf("Big problem!") }
+  LabeledTextField("Bill Amount", text, textErr) { text = it }
 }
