@@ -15,22 +15,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LabeledTextField(label: String, text: String, errorMsg: String = "", onTextUpdate: (String) -> Unit) {
+fun LabeledTextField(
+  label: String, text: String, errorMsg: String = "", placeholder: String = "", prefix: String = "",
+  keyboardOptions: KeyboardOptions = KeyboardOptions.Default, onTextUpdate: (String) -> Unit
+) {
   Row(Modifier.padding(16.dp, 10.dp, 16.dp, 4.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
-    TextField(text, onValueChange = { onTextUpdate(it) }, singleLine = true,
-      modifier = Modifier.weight(0.7f), placeholder = { Text("0.00") }, prefix = { Text("$") },
+    TextField(text, { onTextUpdate(it) }, Modifier.weight(0.7f), singleLine = true,
+      placeholder = { Text(placeholder) }, prefix = { Text(prefix) }, keyboardOptions = keyboardOptions,
       supportingText = { Text(errorMsg, color = Color.Red) }, isError = errorMsg.isNotBlank(),
       colors = TextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
         errorContainerColor = Color.Transparent, errorTextColor = Color.Red, errorPrefixColor = Color.Red
-      ), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+      )
     )
   }
 }

@@ -2,12 +2,14 @@ package itp341.caceres.nicholas.tipCalculator.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import itp341.caceres.nicholas.tipCalculator.ViewModelMain
@@ -21,7 +23,9 @@ fun MainScreen(viewModel: ViewModelMain) {
   val bill by viewModel.bill.collectAsState()
   val billError by viewModel.billError.collectAsState()
   Column {
-    LabeledTextField("Bill Amount", bill.amount, billError) { viewModel.updateAmount(it) }
+    LabeledTextField(
+      "Bill Amount", bill.amount, billError, "0.00", "$", KeyboardOptions(keyboardType = KeyboardType.Decimal)
+    ) { viewModel.updateAmount(it) }
     LabeledSlider("Percent", bill.percent) { viewModel.updatePercent(it) }
     LabeledText("Tip", bill.tip, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
     LabeledText("Total", bill.total, Modifier.padding(20.dp, 20.dp, 10.dp, 10.dp))
