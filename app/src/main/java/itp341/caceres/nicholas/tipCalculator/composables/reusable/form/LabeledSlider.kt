@@ -18,6 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
+/** A reusable composable for forms to add a percent Slider/Seekbar with a Text read-out of the
+ * Slider's value and bolded label, updatable in real-time via `onSliderChange` callback.
+ * The label takes 35% of the Row's width, the value Text 15% and Slider 50%. */
 @Composable
 fun LabeledSlider(label: String, percent: Float, onSliderChange: (Float) -> Unit) {
   Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {

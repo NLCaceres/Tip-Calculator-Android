@@ -19,6 +19,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/** A reusable form composable that breaks the label and textField into 2 composables in a Row.
+ * The label takes 30% of available Row width space with the textField filling the remaining 70%.
+ * The textField is still somewhat customizable, allowing the user to specify a placeholder String,
+ * prefix String, and keyboard type */
 @Composable
 fun LabeledTextField(
   label: String, text: String, errorMsg: String = "", placeholder: String = "", prefix: String = "",

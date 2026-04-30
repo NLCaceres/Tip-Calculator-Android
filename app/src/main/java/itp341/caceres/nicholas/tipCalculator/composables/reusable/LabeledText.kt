@@ -13,6 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/** A reusable composable with two Text composables in a Row, one for a label and another
+ * for any related text. The label is Bold by default and aligned to the Start by default.
+ * The label takes 30% of available Row width and the rest of the text takes the remaining 70%. */
 @Composable
 fun LabeledText(
   label: String, value: String, modifier: Modifier = Modifier,

@@ -24,6 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/** A reusable composable for forms to add a Dropdown to select from a list of text options.
+ * When an option is selected, the callback emits the option's original list index to help
+ * update the selection from its parent. It maintains its own state to control its expansion.
+ * It has a bolded label to describe the list that takes 30% of its parent Row's width while
+ * the dropdown takes up the remaining 70%. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabeledDropdown(label: String, options: List<String>, selectedIndex: Int, updateSelection: (Int) -> Unit) {
