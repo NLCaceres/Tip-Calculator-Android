@@ -22,17 +22,15 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LabeledTextField(label: String, text: String, errorMsg: String = "", onTextUpdate: (String) -> Unit) {
-  Row(Modifier.padding(vertical = 10.dp, horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+  Row(Modifier.padding(16.dp, 10.dp, 16.dp, 4.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
-    TextField(text, onValueChange = { onTextUpdate(it) },
+    TextField(text, onValueChange = { onTextUpdate(it) }, singleLine = true,
       modifier = Modifier.weight(0.7f), placeholder = { Text("0.00") }, prefix = { Text("$") },
-      supportingText = errorMsg.takeIf { it.isNotBlank() }?.let { { Text(it, color = Color.Red) } },
-      isError = errorMsg.isNotBlank(),
+      supportingText = { Text(errorMsg, color = Color.Red) }, isError = errorMsg.isNotBlank(),
       colors = TextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
         errorContainerColor = Color.Transparent, errorTextColor = Color.Red, errorPrefixColor = Color.Red
-      ), singleLine = true,
-      keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+      ), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
     )
   }
 }
