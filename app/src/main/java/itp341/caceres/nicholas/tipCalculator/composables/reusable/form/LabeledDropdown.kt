@@ -35,8 +35,8 @@ fun LabeledDropdown(label: String, options: List<String>, selectedIndex: Int, up
   var expanded by remember { mutableStateOf(false) }
 
   Row(Modifier.padding(vertical = 10.dp, horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-    Text(label, Modifier.weight(3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, Modifier.weight(7f)) {
+    Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }, Modifier.weight(0.7f)) {
       TextField(value = options[selectedIndex], onValueChange = {}, readOnly = true,
         modifier = Modifier.menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true),
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
