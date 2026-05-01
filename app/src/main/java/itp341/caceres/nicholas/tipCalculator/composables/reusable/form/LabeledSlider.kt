@@ -26,7 +26,10 @@ fun LabeledSlider(label: String, percent: Float, onSliderChange: (Float) -> Unit
   Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.35f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     Text( "${(percent * 100).roundToInt()}%", Modifier.weight(0.15f), fontSize = 18.sp)
-    Slider(percent, onValueChange = { onSliderChange(it) }, modifier = Modifier.weight(0.5f))
+    Slider(
+      percent, onValueChange = { onSliderChange(it) }, modifier = Modifier.weight(0.5f),
+      valueRange = 0f..0.30f, steps = 31
+    )
   }
 }
 
