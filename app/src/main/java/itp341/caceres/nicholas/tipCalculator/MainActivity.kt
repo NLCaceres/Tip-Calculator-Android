@@ -1,19 +1,18 @@
 package itp341.caceres.nicholas.tipCalculator
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ComposeView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import itp341.caceres.nicholas.tipCalculator.composables.MainScreen
 
-class MainActivity : AppCompatActivity() {
-  private lateinit var mainComposeView: ComposeView
+class MainActivity : ComponentActivity() {
   private var viewModel = ViewModelMain()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-    mainComposeView = findViewById(R.id.main_compose_view)
-    mainComposeView.setContent {
+    enableEdgeToEdge()
+    setContent {
       MainScreen(viewModel)
     }
   }
