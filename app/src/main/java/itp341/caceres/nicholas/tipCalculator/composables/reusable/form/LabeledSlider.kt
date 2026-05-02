@@ -1,9 +1,11 @@
 package itp341.caceres.nicholas.tipCalculator.composables.reusable.form
 
+import androidx.annotation.IntRange
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,19 +28,22 @@ import kotlin.math.roundToInt
 @Composable
 fun LabeledSlider(
   label: String, percent: Float, valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-  @IntRange(from = 0) steps: Int = 0, onSliderChange: (Float) -> Unit
+  @IntRange(from = 0) steps: Int = 0, sliderColors: SliderColors = defaultColors(), onSliderChange: (Float) -> Unit
 ) {
   Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.35f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     Text( "${(percent * 100).roundToInt()}%", Modifier.weight(0.15f), fontSize = 18.sp)
     Slider(
       percent, onValueChange = { onSliderChange(it) }, modifier = Modifier.weight(0.5f),
-      valueRange = valueRange, steps = steps, colors = SliderDefaults.colors(
-        activeTickColor = Color.Transparent, inactiveTickColor = Color.Transparent
-      )
+      valueRange = valueRange, steps = steps, colors = sliderColors
     )
   }
 }
+
+@Composable
+private fun defaultColors() = SliderDefaults.colors(
+  activeTickColor = Color.Transparent, inactiveTickColor = Color.Transparent
+)
 
 @Preview(widthDp = 360, heightDp = 500, showBackground = true)
 @Composable

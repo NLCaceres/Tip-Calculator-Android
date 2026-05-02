@@ -10,6 +10,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -31,7 +32,10 @@ import androidx.compose.ui.unit.sp
  * the dropdown takes up the remaining 70%. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LabeledDropdown(label: String, options: List<String>, selectedIndex: Int, updateSelection: (Int) -> Unit) {
+fun LabeledDropdown(
+  label: String, options: List<String>, selectedIndex: Int,
+  dropdownTextFieldColors: TextFieldColors = defaultColors(), updateSelection: (Int) -> Unit
+) {
   var expanded by remember { mutableStateOf(false) }
 
   Row(Modifier.padding(vertical = 10.dp, horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -40,9 +44,7 @@ fun LabeledDropdown(label: String, options: List<String>, selectedIndex: Int, up
       TextField(value = options[selectedIndex], onValueChange = {}, readOnly = true,
         modifier = Modifier.menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true),
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-        colors = ExposedDropdownMenuDefaults.textFieldColors(
-          focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent
-        ),
+        colors = dropdownTextFieldColors,
       )
       ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
         options.forEachIndexed { i, option ->
@@ -52,6 +54,12 @@ fun LabeledDropdown(label: String, options: List<String>, selectedIndex: Int, up
     }
   }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun defaultColors() = ExposedDropdownMenuDefaults.textFieldColors(
+  focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent
+)
 
 @Preview(widthDp = 360, heightDp = 500, showBackground = true)
 @Composable

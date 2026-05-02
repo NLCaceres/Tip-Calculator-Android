@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,20 +27,24 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun LabeledTextField(
   label: String, text: String, errorMsg: String = "", placeholder: String = "", prefix: String = "",
-  keyboardOptions: KeyboardOptions = KeyboardOptions.Default, onTextUpdate: (String) -> Unit
+  keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+  textFieldColors: TextFieldColors = defaultColors(), onTextUpdate: (String) -> Unit
 ) {
   Row(Modifier.padding(16.dp, 10.dp, 16.dp, 4.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.3f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     TextField(text, { onTextUpdate(it) }, Modifier.weight(0.7f), singleLine = true,
       placeholder = { Text(placeholder) }, prefix = { Text(prefix) }, keyboardOptions = keyboardOptions,
       supportingText = { Text(errorMsg, color = Color.Red) }, isError = errorMsg.isNotBlank(),
-      colors = TextFieldDefaults.colors(
-        focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
-        errorContainerColor = Color.Transparent, errorTextColor = Color.Red, errorPrefixColor = Color.Red
-      )
+      colors = textFieldColors
     )
   }
 }
+
+@Composable
+private fun defaultColors() = TextFieldDefaults.colors(
+  focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
+  errorContainerColor = Color.Transparent, errorTextColor = Color.Red, errorPrefixColor = Color.Red
+)
 
 @Preview(widthDp = 320, heightDp = 150, showBackground = true)
 @Composable
