@@ -24,13 +24,16 @@ import kotlin.math.roundToInt
  * Slider's value and bolded label, updatable in real-time via `onSliderChange` callback.
  * The label takes 35% of the Row's width, the value Text 15% and Slider 50%. */
 @Composable
-fun LabeledSlider(label: String, percent: Float, onSliderChange: (Float) -> Unit) {
+fun LabeledSlider(
+  label: String, percent: Float, valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+  @IntRange(from = 0) steps: Int = 0, onSliderChange: (Float) -> Unit
+) {
   Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
     Text(label, Modifier.weight(0.35f), fontSize = 18.sp, fontWeight = FontWeight.Bold)
     Text( "${(percent * 100).roundToInt()}%", Modifier.weight(0.15f), fontSize = 18.sp)
     Slider(
       percent, onValueChange = { onSliderChange(it) }, modifier = Modifier.weight(0.5f),
-      valueRange = 0f..0.30f, steps = 31, colors = SliderDefaults.colors(
+      valueRange = valueRange, steps = steps, colors = SliderDefaults.colors(
         activeTickColor = Color.Transparent, inactiveTickColor = Color.Transparent
       )
     )
