@@ -7,12 +7,12 @@ plugins {
 }
 android {
     namespace = "itp341.caceres.nicholas.tipCalculator"
-    compileSdkVersion(35)
+    compileSdk { version = release(35) }
 
     defaultConfig {
         applicationId = "itp341.caceres.nicholas.tipCalculator"
-        minSdkVersion(26)
-        targetSdkVersion(35)
+        minSdk { version = release(26) }
+        targetSdk { version = release(35) }
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
