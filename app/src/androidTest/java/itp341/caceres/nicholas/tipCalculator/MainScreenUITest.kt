@@ -153,10 +153,11 @@ class MainScreenUITest {
     composeTestRule.onNodeWithText("2 ways").performClick()
     composeTestRule.onNode(isPopup()).assertIsDisplayed()
     composeTestRule.onNode(
-      hasTextExactly("2 ways") and SemanticsMatcher.expectValue(SemanticsProperties.IsEditable, false)
+      hasTextExactly("2 ways") and SemanticsMatcher.keyNotDefined(SemanticsProperties.IsEditable)
     ).performClick()
+    // THEN the dropdown closes
     composeTestRule.onNode(isPopup()).assertIsNotDisplayed()
-    // THEN the tip and total as well as per-person tip and total remain exactly the same
+    // AND the tip and total as well as per-person tip and total remain exactly the same
     composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip
     composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total
     composeTestRule.onNodeWithText("$7.50").assertExists() // Tip split in 2
@@ -169,6 +170,21 @@ class MainScreenUITest {
     composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip still
     composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total still
     composeTestRule.onNodeWithText("$1.50").assertExists() // Tip split by 10 people
-    composeTestRule.onNodeWithText("$15.00").assertExists() // Total split by 10 people
+    composeTestRule.onNodeWithText("$11.50").assertExists() // Total split by 10 people
+
+    // WHEN the dropdown is opened
+    composeTestRule.onNodeWithText("10 ways").performClick()
+    composeTestRule.onNode(isPopup()).assertIsDisplayed()
+    // AND the dropdown menu box is clicked
+    composeTestRule.onNode(
+      hasTextExactly("10 ways") and SemanticsMatcher.expectValue(SemanticsProperties.IsEditable, false)
+    ).performClick()
+    // THEN the dropdown is closed without changing the value
+    composeTestRule.onNode(isPopup()).assertIsNotDisplayed()
+    // AND the tip and total as well as per-person tip and total remain exactly the same
+    composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip
+    composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total
+    composeTestRule.onNodeWithText("$1.50").assertExists() // Tip split in 10
+    composeTestRule.onNodeWithText("$11.50").assertExists() // Total split in 10
   }
 }
