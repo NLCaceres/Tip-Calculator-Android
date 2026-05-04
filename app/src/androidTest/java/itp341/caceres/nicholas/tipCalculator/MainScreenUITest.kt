@@ -1,8 +1,10 @@
 package itp341.caceres.nicholas.tipCalculator
 
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAll
@@ -10,7 +12,9 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasParent
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.isPopup
@@ -152,9 +156,7 @@ class MainScreenUITest {
     // WHEN the same dropdown item value is selected
     composeTestRule.onNodeWithText("2 ways").performClick()
     composeTestRule.onNode(isPopup()).assertIsDisplayed()
-    composeTestRule.onNode(
-      hasTextExactly("2 ways") and SemanticsMatcher.keyNotDefined(SemanticsProperties.IsEditable)
-    ).performClick()
+    composeTestRule.onNode(hasTextExactly("2 ways") and hasParent(hasScrollAction())).performClick()
     // THEN the dropdown closes
     composeTestRule.onNode(isPopup()).assertIsNotDisplayed()
     // AND the tip and total as well as per-person tip and total remain exactly the same
@@ -176,9 +178,7 @@ class MainScreenUITest {
     composeTestRule.onNodeWithText("10 ways").performClick()
     composeTestRule.onNode(isPopup()).assertIsDisplayed()
     // AND the dropdown menu box is clicked
-    composeTestRule.onNode(
-      hasTextExactly("10 ways") and SemanticsMatcher.expectValue(SemanticsProperties.IsEditable, false)
-    ).performClick()
+    composeTestRule.onNode(hasRole(Role.DropdownList) and hasTextExactly("10 ways")).performClick()
     // THEN the dropdown is closed without changing the value
     composeTestRule.onNode(isPopup()).assertIsNotDisplayed()
     // AND the tip and total as well as per-person tip and total remain exactly the same
@@ -187,4 +187,8 @@ class MainScreenUITest {
     composeTestRule.onNodeWithText("$1.50").assertExists() // Tip split in 10
     composeTestRule.onNodeWithText("$11.50").assertExists() // Total split in 10
   }
+  private fun hasRole(role: Role) = SemanticsMatcher("${SemanticsProperties.Role.name} contains '$role'") {
+    it.config.getOrNull(SemanticsProperties.Role) == role
+  }
+
 }
