@@ -19,6 +19,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
@@ -46,8 +47,8 @@ class MainScreenUITest {
     composeTestRule.onNodeWithText("Bill Amount").assertExists()
     composeTestRule.onNodeWithText("Percent").assertExists()
     composeTestRule.onNodeWithText("Percent").assert(hasAnySibling(hasText("15%")))
-    composeTestRule.onAllNodes(hasText("Tip")).assertCountEquals(2)
-    composeTestRule.onAllNodes(hasText("Total")).assertCountEquals(2)
+    composeTestRule.onNodeWithText("Tip").assertExists() // Only 1 by default
+    composeTestRule.onNodeWithText("Total").assertExists() // Only 1 by default UNTIL split
     composeTestRule.onNodeWithText("Split Bill?").assertExists()
     composeTestRule.onNodeWithText("Split Bill?").assert(hasAnySibling(hasText("No")))
   }
@@ -60,43 +61,37 @@ class MainScreenUITest {
     composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
     // WHEN the user inputs a number value
     composeTestRule.onNodeWithText("0.00").performTextInput("100")
-    // THEN the tip and total values are calculated to a default 15% (including per person - 1 person)
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$15.00")))
-    composeTestRule.onAllNodes(hasText("$15.00")).assertCountEquals(2)
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$115.00")))
-    composeTestRule.onAllNodes(hasText("$115.00")).assertCountEquals(2)
+    // THEN the tip and total values are calculated to a default 15% (no per-person)
+    composeTestRule.onNodeWithText("$15.00").assertExists()
+    composeTestRule.onNodeWithText("$115.00").assertExists()
 
     composeTestRule.onNodeWithText("Invalid amount").assertDoesNotExist()
     // WHEN the user inputs a non-number value ("100" is now "100a")
     composeTestRule.onNodeWithText("100").performTextInput("a")
     composeTestRule.onNodeWithText("100a").assertExists()
     // THEN all tip and total values are set to "$0.00" as error occurs and validation error text appears
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(4)
+    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(2) // Only main tip + total
     composeTestRule.onNodeWithText("Invalid amount").assertExists()
 
     // WHEN the user inputs a dollar value (including the "$")
     composeTestRule.onNodeWithText("100a").performTextReplacement("$50")
     composeTestRule.onNodeWithText("$50").assertExists()
     // THEN the tip and total values are still set to "$0.00" with the error message remaining
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
+    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(2) // Only main tip + total
     composeTestRule.onNodeWithText("Invalid amount").assertExists()
 
     // WHEN the user inputs a decimal number value
     composeTestRule.onNodeWithText("$50").performTextReplacement("50.00")
     // THEN the tip and total are correctly calculated (no validation error text)
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$7.50")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$57.50")))
+    composeTestRule.onNodeWithText("$7.50").assertExists()
+    composeTestRule.onNodeWithText("$57.50").assertExists()
     composeTestRule.onNodeWithText("Invalid amount").assertDoesNotExist()
 
     // WHEN the user clears the text field
     composeTestRule.onNodeWithText("50.00").performTextReplacement("")
     // THEN the textField "0.00" placeholder reappears AND tip/total values reset to "$0.00
     composeTestRule.onNodeWithText("0.00").assertExists()
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
+    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(2) // Only main tip + total
   }
 
   @Test
@@ -141,9 +136,9 @@ class MainScreenUITest {
     // UNTIL a dropdown item is clicked
     composeTestRule.onNodeWithText("2 ways").performClick()
     composeTestRule.onNode(isPopup()).assertDoesNotExist()
-    // AND since the textField is still empty, THEN the tip and total remains "$0.00"
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
+    // AND since split > 1, THEN the per-person tip and total are displayed
+    // AND since the textField is still empty, THEN ALL tips and totals remains "$0.00"
+    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
 
     // WHEN the textField is set
     composeTestRule.onNodeWithText("0.00").performTextInput("100.00")
@@ -190,5 +185,4 @@ class MainScreenUITest {
   private fun hasRole(role: Role) = SemanticsMatcher("${SemanticsProperties.Role.name} contains '$role'") {
     it.config.getOrNull(SemanticsProperties.Role) == role
   }
-
 }
