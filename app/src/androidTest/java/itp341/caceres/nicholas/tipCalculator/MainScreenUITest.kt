@@ -115,8 +115,8 @@ class MainScreenUITest {
     composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$130.00")))
 
     // WHEN the Slider is set to 0% (all the way left) -- Alt easier method to do so (swipe is finicky)
-    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.3f, 0.0f..0.3f, 31))).
-      performSemanticsAction(SemanticsActions.SetProgress) { it(0.0f) }
+    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.3f, 0.0f..0.3f, 31)))
+      .performSemanticsAction(SemanticsActions.SetProgress) { it(0.0f) }
     composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.0f, 0.0f..0.3f, 31))).assertExists()
     // THEN the tip and total is set to "$0.00"
     composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
@@ -184,5 +184,41 @@ class MainScreenUITest {
   }
   private fun hasRole(role: Role) = SemanticsMatcher("${SemanticsProperties.Role.name} contains '$role'") {
     it.config.getOrNull(SemanticsProperties.Role) == role
+  }
+
+  @Test
+  fun testPerPersonSection() {
+    composeTestRule.setContent {
+      MainScreen(ViewModelMain())
+    }
+    // WHEN the app launches, No Per-Person section displayed/rendered
+    composeTestRule.onNodeWithText("Per Person").assertDoesNotExist()
+    // UNTIL the dropdown is opened, and split selected > 1
+    composeTestRule.onNodeWithText("No").performClick()
+    composeTestRule.onNodeWithText("2 ways").performClick()
+    // THEN the Per-Person composable renders
+    composeTestRule.onNodeWithText("Per Person").assertExists()
+    // AND another tip/total section appears (2 tip + grand total and 2 per-person tip + total)
+    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
+
+    // WHEN the textField sets a bill amount and the split > 1
+    composeTestRule.onNodeWithText("0.00").performTextInput("100")
+    // THEN the per-person section tip and total is calculated
+    composeTestRule.onNodeWithText("$7.50").assertExists() // Per-person tip
+    composeTestRule.onNodeWithText("$57.50").assertExists() // Per-person total
+
+    // WHEN the textField has an amount error
+    composeTestRule.onNodeWithText("100").performTextInput("a")
+    // THEN the per-person section tip and total is ALSO set to "$0.00"
+    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
+
+    composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress))
+      .performSemanticsAction(SemanticsActions.SetProgress) { it(0.3f) }
+    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
+    composeTestRule.onNodeWithText("100a").performTextReplacement("30")
+    composeTestRule.onNodeWithText("$9.00").assertExists()
+    composeTestRule.onNodeWithText("$39.00").assertExists()
+    composeTestRule.onNodeWithText("$4.50").assertExists()
+    composeTestRule.onNodeWithText("$19.50").assertExists()
   }
 }
