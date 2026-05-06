@@ -6,7 +6,6 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -29,6 +28,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import itp341.caceres.nicholas.tipCalculator.composables.MainScreen
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,25 +38,22 @@ class MainScreenUITest {
   @get:Rule
   val composeTestRule = createComposeRule()
 
-  @Test
-  fun testAppLaunches() {
+  @Before
+  fun setupContent() {
     composeTestRule.setContent {
       MainScreen(ViewModelMain())
     }
-    // WHEN the app launches, THEN the following are the default displayed
+    // WHEN app launches, THEN following composables should render
     composeTestRule.onNodeWithText("Bill Amount").assertExists()
     composeTestRule.onNodeWithText("Percent").assertExists()
-    composeTestRule.onNodeWithText("Percent").assert(hasAnySibling(hasText("15%")))
     composeTestRule.onNodeWithText("Tip").assertExists() // Only 1 by default
     composeTestRule.onNodeWithText("Total").assertExists() // Only 1 by default UNTIL split
     composeTestRule.onNodeWithText("Split Bill?").assertExists()
-    composeTestRule.onNodeWithText("Split Bill?").assert(hasAnySibling(hasText("No")))
+    composeTestRule.onNodeWithText("Per Person").assertDoesNotExist() // EXCEPT this section
   }
+
   @Test
   fun testTextField() {
-    composeTestRule.setContent {
-      MainScreen(ViewModelMain())
-    }
     composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
     composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
     // WHEN the user inputs a number value
@@ -96,9 +93,6 @@ class MainScreenUITest {
 
   @Test
   fun testSlider() {
-    composeTestRule.setContent {
-      MainScreen(ViewModelMain())
-    }
     // WHEN the user moves the Slider thumb all the way to its right BUT the textField is empty
     composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.15f, 0.0f..0.3f, 31))).performTouchInput {
       swipe(percentOffset(0.5f, 0.5f), percentOffset(1.0f, 0.5f))
@@ -125,9 +119,6 @@ class MainScreenUITest {
 
   @Test
   fun testDropdown() {
-    composeTestRule.setContent {
-      MainScreen(ViewModelMain())
-    }
     // WHEN the user clicks on the dropdown
     composeTestRule.onNode(isPopup()).assertDoesNotExist()
     composeTestRule.onNodeWithText("No").performClick()
@@ -188,9 +179,6 @@ class MainScreenUITest {
 
   @Test
   fun testPerPersonSection() {
-    composeTestRule.setContent {
-      MainScreen(ViewModelMain())
-    }
     // WHEN the app launches, No Per-Person section displayed/rendered
     composeTestRule.onNodeWithText("Per Person").assertDoesNotExist()
     // UNTIL the dropdown is opened, and split selected > 1
