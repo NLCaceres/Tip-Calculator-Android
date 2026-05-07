@@ -28,6 +28,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import itp341.caceres.nicholas.tipCalculator.composables.MainScreen
+import itp341.caceres.nicholas.tipCalculator.helpers.MainScreenRobot
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,41 +55,39 @@ class MainScreenUITest {
 
   @Test
   fun testTextField() {
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
+    val mainScreenBot = MainScreenRobot(composeTestRule)
+    mainScreenBot.checkZeroTipAndTotal(2)
     // WHEN the user inputs a number value
-    composeTestRule.onNodeWithText("0.00").performTextInput("100")
+    mainScreenBot.enterBillAmount("100")
     // THEN the tip and total values are calculated to a default 15% (no per-person)
-    composeTestRule.onNodeWithText("$15.00").assertExists()
-    composeTestRule.onNodeWithText("$115.00").assertExists()
+    mainScreenBot.checkTipAndTotalUpdate("$15.00", "$115.00")
 
-    composeTestRule.onNodeWithText("Invalid amount").assertDoesNotExist()
+    mainScreenBot.hasValidationError(false)
     // WHEN the user inputs a non-number value ("100" is now "100a")
-    composeTestRule.onNodeWithText("100").performTextInput("a")
-    composeTestRule.onNodeWithText("100a").assertExists()
+    mainScreenBot.enterBillAmount("a")
+    mainScreenBot.checkBillAmount("100a")
     // THEN all tip and total values are set to "$0.00" as error occurs and validation error text appears
-    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(2) // Only main tip + total
-    composeTestRule.onNodeWithText("Invalid amount").assertExists()
+    mainScreenBot.checkZeroTipAndTotal(2)
+    mainScreenBot.hasValidationError(true)
 
     // WHEN the user inputs a dollar value (including the "$")
-    composeTestRule.onNodeWithText("100a").performTextReplacement("$50")
-    composeTestRule.onNodeWithText("$50").assertExists()
+    mainScreenBot.replaceBillAmount("$50")
+    mainScreenBot.checkBillAmount("$50")
     // THEN the tip and total values are still set to "$0.00" with the error message remaining
-    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(2) // Only main tip + total
-    composeTestRule.onNodeWithText("Invalid amount").assertExists()
+    mainScreenBot.checkZeroTipAndTotal(2)
+    mainScreenBot.hasValidationError(true)
 
     // WHEN the user inputs a decimal number value
-    composeTestRule.onNodeWithText("$50").performTextReplacement("50.00")
+    mainScreenBot.replaceBillAmount("50.00")
     // THEN the tip and total are correctly calculated (no validation error text)
-    composeTestRule.onNodeWithText("$7.50").assertExists()
-    composeTestRule.onNodeWithText("$57.50").assertExists()
-    composeTestRule.onNodeWithText("Invalid amount").assertDoesNotExist()
+    mainScreenBot.checkTipAndTotalUpdate("$7.50", "$57.50")
+    mainScreenBot.hasValidationError(false)
 
     // WHEN the user clears the text field
-    composeTestRule.onNodeWithText("50.00").performTextReplacement("")
+    mainScreenBot.replaceBillAmount("")
     // THEN the textField "0.00" placeholder reappears AND tip/total values reset to "$0.00
-    composeTestRule.onNodeWithText("0.00").assertExists()
-    composeTestRule.onAllNodes(hasText("$0.00")).assertCountEquals(2) // Only main tip + total
+    mainScreenBot.checkBillAmount("0.00")
+    mainScreenBot.checkZeroTipAndTotal(2)
   }
 
   @Test
