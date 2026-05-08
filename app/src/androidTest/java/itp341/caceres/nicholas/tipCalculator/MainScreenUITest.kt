@@ -38,19 +38,20 @@ import org.junit.runner.RunWith
 class MainScreenUITest {
   @get:Rule
   val composeTestRule = createComposeRule()
+  private lateinit var mainScreenBot: MainScreenRobot
 
   @Before
   fun setupContent() {
-    composeTestRule.setContent {
-      MainScreen(ViewModelMain())
-    }
-    // WHEN app launches, THEN following composables should render
-    composeTestRule.onNodeWithText("Bill Amount").assertExists()
-    composeTestRule.onNodeWithText("Percent").assertExists()
-    composeTestRule.onNodeWithText("Tip").assertExists() // Only 1 by default
-    composeTestRule.onNodeWithText("Total").assertExists() // Only 1 by default UNTIL split
-    composeTestRule.onNodeWithText("Split Bill?").assertExists()
-    composeTestRule.onNodeWithText("Per Person").assertDoesNotExist() // EXCEPT this section
+    mainScreenBot = MainScreenRobot(composeTestRule)
+    // WHEN app launches
+    mainScreenBot.start()
+    // THEN following label composables should  render
+    mainScreenBot.checkLabel("Bill Amount")
+    mainScreenBot.checkLabel("Percent")
+    mainScreenBot.checkLabel("Tip") // Only 1 Tip renders at first by default
+    mainScreenBot.checkLabel("Total") // Only 1 by default
+    mainScreenBot.checkLabel("Split Bill?")
+    mainScreenBot.checkPerPersonSection(false) // EXCEPT this section
   }
 
   @Test
