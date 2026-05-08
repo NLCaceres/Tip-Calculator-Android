@@ -2,7 +2,6 @@ package itp341.caceres.nicholas.tipCalculator.helpers
 
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.isEditable
@@ -46,7 +45,7 @@ class MainScreenRobot(private val composeTestRule: ComposeContentTestRule) {
     composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(value, 0.0f..0.3f, 31))).assertExists()
   }
   fun moveSlider(value: Float) {
-    composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress))
+    composeTestRule.onNode(hasKey(SemanticsActions.SetProgress))
       .performSemanticsAction(SemanticsActions.SetProgress) { it(value) }
   }
   fun checkPerPersonSection(displayed: Boolean) {
