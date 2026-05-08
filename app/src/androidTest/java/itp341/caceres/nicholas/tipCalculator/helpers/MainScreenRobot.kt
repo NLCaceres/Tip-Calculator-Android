@@ -1,10 +1,15 @@
 package itp341.caceres.nicholas.tipCalculator.helpers
 
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.isEditable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import itp341.caceres.nicholas.tipCalculator.ViewModelMain
@@ -36,6 +41,13 @@ class MainScreenRobot(private val composeTestRule: ComposeContentTestRule) {
   fun hasValidationError(displayed: Boolean) {
     if (displayed) composeTestRule.onNodeWithText("Invalid amount").assertExists()
     else composeTestRule.onNodeWithText("Invalid amount").assertDoesNotExist()
+  }
+  fun checkSlider(value: Float) {
+    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(value, 0.0f..0.3f, 31))).assertExists()
+  }
+  fun moveSlider(value: Float) {
+    composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress))
+      .performSemanticsAction(SemanticsActions.SetProgress) { it(value) }
   }
   fun checkPerPersonSection(displayed: Boolean) {
     if (displayed) composeTestRule.onNodeWithText("Per Person").assertExists()

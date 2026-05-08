@@ -94,27 +94,22 @@ class MainScreenUITest {
   @Test
   fun testSlider() {
     // WHEN the user moves the Slider thumb all the way to its right BUT the textField is empty
-    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.15f, 0.0f..0.3f, 31))).performTouchInput {
-      swipe(percentOffset(0.5f, 0.5f), percentOffset(1.0f, 0.5f))
-    }
+    mainScreenBot.checkSlider(0.15f) // Defaults to 15%
+    mainScreenBot.moveSlider(0.3f)
     // THEN the tip and total is still "$0.00"
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
+    mainScreenBot.checkZeroTipAndTotal(2)
 
     // WHEN the textField is now "100.00"
-    composeTestRule.onNodeWithText("0.00").performTextInput("100.00")
+    mainScreenBot.enterBillAmount("100.00")
     // THEN the Slider, having been set to 30%, sets the tip to "$30.00" and the total to "$130.00"
-    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.3f, 0.0f..0.3f, 31))).assertExists()
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$30.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$130.00")))
+    mainScreenBot.checkSlider(0.3f)
+    mainScreenBot.checkTipAndTotalUpdate("$30.00", "$130.00")
 
     // WHEN the Slider is set to 0% (all the way left) -- Alt easier method to do so (swipe is finicky)
-    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.3f, 0.0f..0.3f, 31)))
-      .performSemanticsAction(SemanticsActions.SetProgress) { it(0.0f) }
-    composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo(0.0f, 0.0f..0.3f, 31))).assertExists()
-    // THEN the tip and total is set to "$0.00"
-    composeTestRule.onAllNodes(hasText("Tip")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
-    composeTestRule.onAllNodes(hasText("Total")).assertAll(hasAnySibling(hasTextExactly("$0.00")))
+    mainScreenBot.moveSlider(0.0f)
+    mainScreenBot.checkSlider(0.0f)
+    // THEN the tip is $0.00 and the total only $100.00
+    mainScreenBot.checkTipAndTotalUpdate("$0.00", "$100.00")
   }
 
   @Test
