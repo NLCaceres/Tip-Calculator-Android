@@ -168,9 +168,6 @@ class MainScreenUITest {
     composeTestRule.onNodeWithText("$1.50").assertExists() // Tip split in 10
     composeTestRule.onNodeWithText("$11.50").assertExists() // Total split in 10
   }
-  private fun hasRole(role: Role) = SemanticsMatcher("${SemanticsProperties.Role.name} contains '$role'") {
-    it.config.getOrNull(SemanticsProperties.Role) == role
-  }
 
   @Test
   fun testPerPersonSection() {
