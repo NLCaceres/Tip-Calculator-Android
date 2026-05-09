@@ -1,22 +1,8 @@
 package itp341.caceres.nicholas.tipCalculator
 
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.hasAnySibling
-import androidx.compose.ui.test.hasParent
-import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.hasScrollAction
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.hasTextExactly
-import androidx.compose.ui.test.isPopup
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -24,10 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import itp341.caceres.nicholas.tipCalculator.composables.MainScreen
 import itp341.caceres.nicholas.tipCalculator.helpers.MainScreenRobot
 import org.junit.Before
 import org.junit.Rule
@@ -115,58 +98,46 @@ class MainScreenUITest {
   @Test
   fun testDropdown() {
     // WHEN the user clicks on the dropdown
-    composeTestRule.onNode(isPopup()).assertDoesNotExist()
-    composeTestRule.onNodeWithText("No").performClick()
+    mainScreenBot.checkDropdown(false)
+    mainScreenBot.toggleDropdown()
     // THEN the dropdown is displayed
-    composeTestRule.onNode(isPopup()).assertIsDisplayed()
+    mainScreenBot.checkDropdown(true)
     // UNTIL a dropdown item is clicked
-    composeTestRule.onNodeWithText("2 ways").performClick()
-    composeTestRule.onNode(isPopup()).assertDoesNotExist()
+    mainScreenBot.selectDropdownItem("2 ways")
+    mainScreenBot.checkDropdown(false)
     // AND since split > 1, THEN the per-person tip and total are displayed
     // AND since the textField is still empty, THEN ALL tips and totals remains "$0.00"
-    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
+    mainScreenBot.checkZeroTipAndTotal(4)
 
     // WHEN the textField is set
-    composeTestRule.onNodeWithText("0.00").performTextInput("100.00")
-    // THEN the tip and total is a different set of values compared to the per-person version
-    composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip
-    composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total
-    composeTestRule.onNodeWithText("$7.50").assertExists() // Tip split in 2
-    composeTestRule.onNodeWithText("$57.50").assertExists() // Total split in 2
+    mainScreenBot.enterBillAmount("100.00")
+    // THEN the main tip and total is a different pair of values compared to the per-person version
+    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
 
     // WHEN the same dropdown item value is selected
-    composeTestRule.onNodeWithText("2 ways").performClick()
-    composeTestRule.onNode(isPopup()).assertIsDisplayed()
-    composeTestRule.onNode(hasTextExactly("2 ways") and hasParent(hasScrollAction())).performClick()
+    mainScreenBot.toggleDropdown()
+    mainScreenBot.checkDropdown(true)
+    mainScreenBot.selectDropdownItem("2 ways")
     // THEN the dropdown closes
-    composeTestRule.onNode(isPopup()).assertIsNotDisplayed()
+    mainScreenBot.checkDropdown(false)
     // AND the tip and total as well as per-person tip and total remain exactly the same
-    composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip
-    composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total
-    composeTestRule.onNodeWithText("$7.50").assertExists() // Tip split in 2
-    composeTestRule.onNodeWithText("$57.50").assertExists() // Total split in 2
+    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
 
     // WHEN the dropdown item value is changed
-    composeTestRule.onNodeWithText("2 ways").performClick() // Open dropdown
-    composeTestRule.onNodeWithText("10 ways").performClick() // Select new value
+    mainScreenBot.toggleDropdown()
+    mainScreenBot.selectDropdownItem("10 ways")
     // THEN the per-person tip and total values change, NOT the actual tip and total
-    composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip still
-    composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total still
-    composeTestRule.onNodeWithText("$1.50").assertExists() // Tip split by 10 people
-    composeTestRule.onNodeWithText("$11.50").assertExists() // Total split by 10 people
+    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$1.50", "$11.50")
 
     // WHEN the dropdown is opened
-    composeTestRule.onNodeWithText("10 ways").performClick()
-    composeTestRule.onNode(isPopup()).assertIsDisplayed()
+    mainScreenBot.toggleDropdown()
+    mainScreenBot.checkDropdown(true)
     // AND the dropdown menu box is clicked
-    composeTestRule.onNode(hasRole(Role.DropdownList) and hasTextExactly("10 ways")).performClick()
+    mainScreenBot.toggleDropdown()
     // THEN the dropdown is closed without changing the value
-    composeTestRule.onNode(isPopup()).assertIsNotDisplayed()
+    mainScreenBot.checkDropdown(false)
     // AND the tip and total as well as per-person tip and total remain exactly the same
-    composeTestRule.onNodeWithText("$15.00").assertExists() // Actual full tip
-    composeTestRule.onNodeWithText("$115.00").assertExists() // Actual full total
-    composeTestRule.onNodeWithText("$1.50").assertExists() // Tip split in 10
-    composeTestRule.onNodeWithText("$11.50").assertExists() // Total split in 10
+    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$1.50", "$11.50")
   }
 
   @Test
