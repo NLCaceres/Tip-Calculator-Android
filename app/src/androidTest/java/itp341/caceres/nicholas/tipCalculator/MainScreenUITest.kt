@@ -1,15 +1,6 @@
 package itp341.caceres.nicholas.tipCalculator
 
-import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performSemanticsAction
-import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import itp341.caceres.nicholas.tipCalculator.helpers.MainScreenRobot
 import org.junit.Before
@@ -143,33 +134,28 @@ class MainScreenUITest {
   @Test
   fun testPerPersonSection() {
     // WHEN the app launches, No Per-Person section displayed/rendered
-    composeTestRule.onNodeWithText("Per Person").assertDoesNotExist()
+    mainScreenBot.checkPerPersonSection(false)
     // UNTIL the dropdown is opened, and split selected > 1
-    composeTestRule.onNodeWithText("No").performClick()
-    composeTestRule.onNodeWithText("2 ways").performClick()
+    mainScreenBot.toggleDropdown()
+    mainScreenBot.selectDropdownItem("2 ways")
     // THEN the Per-Person composable renders
-    composeTestRule.onNodeWithText("Per Person").assertExists()
+    mainScreenBot.checkPerPersonSection(true)
     // AND another tip/total section appears (2 tip + grand total and 2 per-person tip + total)
-    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
+    mainScreenBot.checkZeroTipAndTotal(4)
 
     // WHEN the textField sets a bill amount and the split > 1
-    composeTestRule.onNodeWithText("0.00").performTextInput("100")
+    mainScreenBot.enterBillAmount("100")
     // THEN the per-person section tip and total is calculated
-    composeTestRule.onNodeWithText("$7.50").assertExists() // Per-person tip
-    composeTestRule.onNodeWithText("$57.50").assertExists() // Per-person total
+    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
 
     // WHEN the textField has an amount error
-    composeTestRule.onNodeWithText("100").performTextInput("a")
+    mainScreenBot.enterBillAmount("a")
     // THEN the per-person section tip and total is ALSO set to "$0.00"
-    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
+    mainScreenBot.checkZeroTipAndTotal(4)
 
-    composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress))
-      .performSemanticsAction(SemanticsActions.SetProgress) { it(0.3f) }
-    composeTestRule.onAllNodesWithText("$0.00").assertCountEquals(4)
-    composeTestRule.onNodeWithText("100a").performTextReplacement("30")
-    composeTestRule.onNodeWithText("$9.00").assertExists()
-    composeTestRule.onNodeWithText("$39.00").assertExists()
-    composeTestRule.onNodeWithText("$4.50").assertExists()
-    composeTestRule.onNodeWithText("$19.50").assertExists()
+    mainScreenBot.moveSlider(0.3f)
+    mainScreenBot.checkZeroTipAndTotal(4)
+    mainScreenBot.replaceBillAmount("30")
+    mainScreenBot.checkAllTipsAndTotal("$9.00", "$39.00", "$4.50", "$19.50")
   }
 }
