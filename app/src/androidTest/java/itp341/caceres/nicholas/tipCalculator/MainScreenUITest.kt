@@ -16,146 +16,152 @@ class MainScreenUITest {
 
   @Before
   fun setupContent() {
-    mainScreenBot = MainScreenRobot(composeTestRule)
-    // WHEN app launches
-    mainScreenBot.start()
-    // THEN following label composables should  render
-    mainScreenBot.checkLabel("Bill Amount")
-    mainScreenBot.checkLabel("Percent")
-    mainScreenBot.checkLabel("Tip") // Only 1 Tip renders at first by default
-    mainScreenBot.checkLabel("Total") // Only 1 by default
-    mainScreenBot.checkLabel("Split Bill?")
-    mainScreenBot.checkPerPersonSection(false) // EXCEPT this section
+    mainScreenBot = MainScreenRobot(composeTestRule).apply {
+      start() // WHEN the app launches, THEN the following label composables should render
+      checkLabel("Bill Amount")
+      checkLabel("Percent")
+      checkLabel("Tip") // Only 1 Tip renders at first by default
+      checkLabel("Total") // Only 1 by default
+      checkLabel("Split Bill?")
+      checkPerPersonSection(false) // EXCEPT this section
+    }
   }
 
   @Test
   fun testTextField() {
-    val mainScreenBot = MainScreenRobot(composeTestRule)
-    mainScreenBot.checkZeroTipAndTotal(2)
-    // WHEN the user inputs a number value
-    mainScreenBot.enterBillAmount("100")
-    // THEN the tip and total values are calculated to a default 15% (no per-person)
-    mainScreenBot.checkTipAndTotalUpdate("$15.00", "$115.00")
+    mainScreenBot.run {
+      checkZeroTipAndTotal(2)
+      // WHEN the user inputs a number value
+      enterBillAmount("100")
+      // THEN the tip and total values are calculated to a default 15% (no per-person)
+      checkTipAndTotalUpdate("$15.00", "$115.00")
 
-    mainScreenBot.hasValidationError(false)
-    // WHEN the user inputs a non-number value ("100" is now "100a")
-    mainScreenBot.enterBillAmount("a")
-    mainScreenBot.checkBillAmount("100a")
-    // THEN all tip and total values are set to "$0.00" as error occurs and validation error text appears
-    mainScreenBot.checkZeroTipAndTotal(2)
-    mainScreenBot.hasValidationError(true)
+      hasValidationError(false)
+      // WHEN the user inputs a non-number value ("100" is now "100a")
+      enterBillAmount("a")
+      checkBillAmount("100a")
+      // THEN all tip and total values are set to "$0.00" as error occurs and validation error text appears
+      checkZeroTipAndTotal(2)
+      hasValidationError(true)
 
-    // WHEN the user inputs a dollar value (including the "$")
-    mainScreenBot.replaceBillAmount("$50")
-    mainScreenBot.checkBillAmount("$50")
-    // THEN the tip and total values are still set to "$0.00" with the error message remaining
-    mainScreenBot.checkZeroTipAndTotal(2)
-    mainScreenBot.hasValidationError(true)
+      // WHEN the user inputs a dollar value (including the "$")
+      replaceBillAmount("$50")
+      checkBillAmount("$50")
+      // THEN the tip and total values are still set to "$0.00" with the error message remaining
+      checkZeroTipAndTotal(2)
+      hasValidationError(true)
 
-    // WHEN the user inputs a decimal number value
-    mainScreenBot.replaceBillAmount("50.00")
-    // THEN the tip and total are correctly calculated (no validation error text)
-    mainScreenBot.checkTipAndTotalUpdate("$7.50", "$57.50")
-    mainScreenBot.hasValidationError(false)
+      // WHEN the user inputs a decimal number value
+      replaceBillAmount("50.00")
+      // THEN the tip and total are correctly calculated (no validation error text)
+      checkTipAndTotalUpdate("$7.50", "$57.50")
+      hasValidationError(false)
 
-    // WHEN the user clears the text field
-    mainScreenBot.replaceBillAmount("")
-    // THEN the textField "0.00" placeholder reappears AND tip/total values reset to "$0.00
-    mainScreenBot.checkBillAmount("0.00")
-    mainScreenBot.checkZeroTipAndTotal(2)
+      // WHEN the user clears the text field
+      replaceBillAmount("")
+      // THEN the textField "0.00" placeholder reappears AND tip/total values reset to "$0.00
+      checkBillAmount("0.00")
+      checkZeroTipAndTotal(2)
+    }
   }
 
   @Test
   fun testSlider() {
-    // WHEN the user moves the Slider thumb all the way to its right BUT the textField is empty
-    mainScreenBot.checkSlider(0.15f) // Defaults to 15%
-    mainScreenBot.moveSlider(0.3f)
-    // THEN the tip and total is still "$0.00"
-    mainScreenBot.checkZeroTipAndTotal(2)
+    mainScreenBot.run {
+      // WHEN the user moves the Slider thumb all the way to its right BUT the textField is empty
+      checkSlider(0.15f) // Defaults to 15%
+      moveSlider(0.3f)
+      // THEN the tip and total is still "$0.00"
+      checkZeroTipAndTotal(2)
 
-    // WHEN the textField is now "100.00"
-    mainScreenBot.enterBillAmount("100.00")
-    // THEN the Slider, having been set to 30%, sets the tip to "$30.00" and the total to "$130.00"
-    mainScreenBot.checkSlider(0.3f)
-    mainScreenBot.checkTipAndTotalUpdate("$30.00", "$130.00")
+      // WHEN the textField is now "100.00"
+      enterBillAmount("100.00")
+      // THEN the Slider, having been set to 30%, sets the tip to "$30.00" and the total to "$130.00"
+      checkSlider(0.3f)
+      checkTipAndTotalUpdate("$30.00", "$130.00")
 
-    // WHEN the Slider is set to 0% (all the way left) -- Alt easier method to do so (swipe is finicky)
-    mainScreenBot.moveSlider(0.0f)
-    mainScreenBot.checkSlider(0.0f)
-    // THEN the tip is $0.00 and the total only $100.00
-    mainScreenBot.checkTipAndTotalUpdate("$0.00", "$100.00")
+      // WHEN the Slider is set to 0% (all the way left) -- Alt easier method to do so (swipe is finicky)
+      moveSlider(0.0f)
+      checkSlider(0.0f)
+      // THEN the tip is $0.00 and the total only $100.00
+      checkTipAndTotalUpdate("$0.00", "$100.00")
+    }
   }
 
   @Test
   fun testDropdown() {
-    // WHEN the user clicks on the dropdown
-    mainScreenBot.checkDropdown(false)
-    mainScreenBot.toggleDropdown()
-    // THEN the dropdown is displayed
-    mainScreenBot.checkDropdown(true)
-    // UNTIL a dropdown item is clicked
-    mainScreenBot.selectDropdownItem("2 ways")
-    mainScreenBot.checkDropdown(false)
-    // AND since split > 1, THEN the per-person tip and total are displayed
-    // AND since the textField is still empty, THEN ALL tips and totals remains "$0.00"
-    mainScreenBot.checkZeroTipAndTotal(4)
+    mainScreenBot.run {
+      // WHEN the user clicks on the dropdown
+      checkDropdown(false)
+      toggleDropdown()
+      // THEN the dropdown is displayed
+      checkDropdown(true)
+      // UNTIL a dropdown item is clicked
+      selectDropdownItem("2 ways")
+      checkDropdown(false)
+      // AND since split > 1, THEN the per-person tip and total are displayed
+      // AND since the textField is still empty, THEN ALL tips and totals remains "$0.00"
+      checkZeroTipAndTotal(4)
 
-    // WHEN the textField is set
-    mainScreenBot.enterBillAmount("100.00")
-    // THEN the main tip and total is a different pair of values compared to the per-person version
-    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
+      // WHEN the textField is set
+      enterBillAmount("100.00")
+      // THEN the main tip and total is a different pair of values compared to the per-person version
+      checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
 
-    // WHEN the same dropdown item value is selected
-    mainScreenBot.toggleDropdown()
-    mainScreenBot.checkDropdown(true)
-    mainScreenBot.selectDropdownItem("2 ways")
-    // THEN the dropdown closes
-    mainScreenBot.checkDropdown(false)
-    // AND the tip and total as well as per-person tip and total remain exactly the same
-    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
+      // WHEN the same dropdown item value is selected
+      toggleDropdown()
+      checkDropdown(true)
+      selectDropdownItem("2 ways")
+      // THEN the dropdown closes
+      checkDropdown(false)
+      // AND the tip and total as well as per-person tip and total remain exactly the same
+      checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
 
-    // WHEN the dropdown item value is changed
-    mainScreenBot.toggleDropdown()
-    mainScreenBot.selectDropdownItem("10 ways")
-    // THEN the per-person tip and total values change, NOT the actual tip and total
-    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$1.50", "$11.50")
+      // WHEN the dropdown item value is changed
+      toggleDropdown()
+      selectDropdownItem("10 ways")
+      // THEN the per-person tip and total values change, NOT the actual tip and total
+      checkAllTipsAndTotal("$15.00", "$115.00", "$1.50", "$11.50")
 
-    // WHEN the dropdown is opened
-    mainScreenBot.toggleDropdown()
-    mainScreenBot.checkDropdown(true)
-    // AND the dropdown menu box is clicked
-    mainScreenBot.toggleDropdown()
-    // THEN the dropdown is closed without changing the value
-    mainScreenBot.checkDropdown(false)
-    // AND the tip and total as well as per-person tip and total remain exactly the same
-    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$1.50", "$11.50")
+      // WHEN the dropdown is opened
+      toggleDropdown()
+      checkDropdown(true)
+      // AND the dropdown menu box is clicked
+      toggleDropdown()
+      // THEN the dropdown is closed without changing the value
+      checkDropdown(false)
+      // AND the tip and total as well as per-person tip and total remain exactly the same
+      checkAllTipsAndTotal("$15.00", "$115.00", "$1.50", "$11.50")
+    }
   }
 
   @Test
   fun testPerPersonSection() {
-    // WHEN the app launches, No Per-Person section displayed/rendered
-    mainScreenBot.checkPerPersonSection(false)
-    // UNTIL the dropdown is opened, and split selected > 1
-    mainScreenBot.toggleDropdown()
-    mainScreenBot.selectDropdownItem("2 ways")
-    // THEN the Per-Person composable renders
-    mainScreenBot.checkPerPersonSection(true)
-    // AND another tip/total section appears (2 tip + grand total and 2 per-person tip + total)
-    mainScreenBot.checkZeroTipAndTotal(4)
+    mainScreenBot.run {
+      // WHEN the app launches, No Per-Person section displayed/rendered
+      checkPerPersonSection(false)
+      // UNTIL the dropdown is opened, and split selected > 1
+      toggleDropdown()
+      selectDropdownItem("2 ways")
+      // THEN the Per-Person composable renders
+      checkPerPersonSection(true)
+      // AND another tip/total section appears (2 tip + grand total and 2 per-person tip + total)
+      checkZeroTipAndTotal(4)
 
-    // WHEN the textField sets a bill amount and the split > 1
-    mainScreenBot.enterBillAmount("100")
-    // THEN the per-person section tip and total is calculated
-    mainScreenBot.checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
+      // WHEN the textField sets a bill amount and the split > 1
+      enterBillAmount("100")
+      // THEN the per-person section tip and total is calculated
+      checkAllTipsAndTotal("$15.00", "$115.00", "$7.50", "$57.50")
 
-    // WHEN the textField has an amount error
-    mainScreenBot.enterBillAmount("a")
-    // THEN the per-person section tip and total is ALSO set to "$0.00"
-    mainScreenBot.checkZeroTipAndTotal(4)
+      // WHEN the textField has an amount error
+      enterBillAmount("a")
+      // THEN the per-person section tip and total is ALSO set to "$0.00"
+      checkZeroTipAndTotal(4)
 
-    mainScreenBot.moveSlider(0.3f)
-    mainScreenBot.checkZeroTipAndTotal(4)
-    mainScreenBot.replaceBillAmount("30")
-    mainScreenBot.checkAllTipsAndTotal("$9.00", "$39.00", "$4.50", "$19.50")
+      moveSlider(0.3f)
+      checkZeroTipAndTotal(4)
+      replaceBillAmount("30")
+      checkAllTipsAndTotal("$9.00", "$39.00", "$4.50", "$19.50")
+    }
   }
 }
