@@ -12,11 +12,11 @@ import org.junit.runner.RunWith
 class MainScreenUITest {
   @get:Rule
   val composeTestRule = createComposeRule()
-  private lateinit var mainScreenBot: MainScreenRobot
+  private val mainScreenBot: (MainScreenRobot.() -> Unit) -> Unit = { runUI -> MainScreenRobot(composeTestRule).apply { runUI() } }
 
   @Before
   fun setupContent() {
-    mainScreenBot = MainScreenRobot(composeTestRule).apply {
+    mainScreenBot {
       start() // WHEN the app launches, THEN the following label composables should render
       checkLabel("Bill Amount")
       checkLabel("Percent")
@@ -29,7 +29,7 @@ class MainScreenUITest {
 
   @Test
   fun testTextField() {
-    mainScreenBot.run {
+    mainScreenBot {
       checkZeroTipAndTotal(2)
       // WHEN the user inputs a number value
       enterBillAmount("100")
@@ -67,7 +67,7 @@ class MainScreenUITest {
 
   @Test
   fun testSlider() {
-    mainScreenBot.run {
+    mainScreenBot {
       // WHEN the user moves the Slider thumb all the way to its right BUT the textField is empty
       checkSlider(0.15f) // Defaults to 15%
       moveSlider(0.3f)
@@ -90,7 +90,7 @@ class MainScreenUITest {
 
   @Test
   fun testDropdown() {
-    mainScreenBot.run {
+    mainScreenBot {
       // WHEN the user clicks on the dropdown
       checkDropdown(false)
       toggleDropdown()
@@ -137,7 +137,7 @@ class MainScreenUITest {
 
   @Test
   fun testPerPersonSection() {
-    mainScreenBot.run {
+    mainScreenBot {
       // WHEN the app launches, No Per-Person section displayed/rendered
       checkPerPersonSection(false)
       // UNTIL the dropdown is opened, and split selected > 1
