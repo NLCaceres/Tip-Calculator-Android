@@ -19,10 +19,10 @@ import itp341.caceres.nicholas.tipCalculator.composables.reusable.form.LabeledSl
 import itp341.caceres.nicholas.tipCalculator.composables.reusable.form.LabeledTextField
 
 @Composable
-fun MainScreen(viewModel: ViewModelMain) {
+fun MainScreen(viewModel: ViewModelMain, modifier: Modifier = Modifier) {
   val bill by viewModel.bill.collectAsState()
   val billError by viewModel.billError.collectAsState()
-  Column {
+  Column(modifier) {
     LabeledTextField(
       "Bill Amount", bill.amount, billError, "0.00", "$", KeyboardOptions(keyboardType = KeyboardType.Decimal)
     ) { viewModel.updateAmount(it) }
