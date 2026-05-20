@@ -12,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import itp341.caceres.nicholas.tipCalculator.composables.MainScreen
 import itp341.caceres.nicholas.tipCalculator.composables.reusable.MainAppBar
 import itp341.caceres.nicholas.tipCalculator.composables.reusable.theme.AppTheme
@@ -22,18 +21,17 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      val viewModel: ViewModelMain = viewModel()
-      AppWithTheme(viewModel)
+      AppWithTheme()
     }
   }
 }
 
 @Composable
-fun AppWithTheme(viewModel: ViewModelMain) {
+fun AppWithTheme() {
   AppTheme {
     MainAppBar("Tip Calculator") { innerPadding ->
       Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        MainScreen(viewModel, Modifier.padding(innerPadding))
+        MainScreen(modifier = Modifier.padding(innerPadding))
       }
     }
   }
@@ -43,6 +41,5 @@ fun AppWithTheme(viewModel: ViewModelMain) {
 @Preview
 @Composable
 fun AppPreview() {
-  val viewModel = ViewModelMain()
-  AppWithTheme(viewModel)
+  AppWithTheme()
 }
