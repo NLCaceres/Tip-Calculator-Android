@@ -26,7 +26,7 @@ fun MainScreen(viewModel: ViewModelMain = viewModel(), modifier: Modifier = Modi
   val billError by viewModel.billError.collectAsState()
   MainScreen(
     bill, billError, viewModel.splitIndex,
-    viewModel::updateAmount, viewModel::updatePercent, viewModel::updateSplit,
+    { viewModel.updateAmount(it) }, { viewModel.updatePercent(it) }, { viewModel.updateSplit(it) },
     modifier
   )
 }
